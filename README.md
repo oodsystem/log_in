@@ -10,6 +10,8 @@ A full-stack web application with user registration and login functionality, bui
 - Backend built with Java and Spring Boot
 - PostgreSQL database integration
 - JWT-based authentication
+- Role-based access for admins, managers, delivery personnel, and customers
+- Delivery requests, assignment, availability, and completion
 
 ## Tech Stack
 
@@ -65,6 +67,8 @@ Required environment variables:
 
 - `DB_PASSWORD` — PostgreSQL password
 - `JWT_SECRET` — secret key used for JWT authentication
+- `ADMIN_USERNAME` and `ADMIN_PASSWORD` — optional credentials used to seed the first admin
+- `REFRESH_COOKIE_SECURE` — set to `true` in HTTPS production deployments; keep `false` for local HTTP development
 
 The backend configuration also supports `DB_URL` and `DB_USERNAME`, with defaults defined in `application.properties`.
 
@@ -80,6 +84,21 @@ cd backend
 ```
 
 Make sure the required environment variables are set in the terminal before starting the backend.
+
+The API issues a short-lived access token in the login response. The long-lived refresh
+token is stored only in an HttpOnly cookie and only its SHA-256 hash is stored in the
+database. The frontend keeps the access token in memory rather than localStorage.
+
+### Main API areas
+
+- `POST /api/auth/register`, `/login`, `/refresh`, and `/logout`
+- Admin: `GET /api/admin/users`, role assignment, and user blocking
+- Customer: create/list personal delivery requests and follow their status
+- Delivery personnel: set availability, view assigned requests, and mark requests delivered
+- Manager: search delivery requests, view order details, and assign available delivery personnel
+
+New registrations have the `PENDING` role and cannot log in until an admin assigns
+`CUSTOMER`, `DELIVERY_GUY`, or `MANAGER`.
 
 ### 4. Run the frontend
 
