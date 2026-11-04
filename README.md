@@ -43,9 +43,7 @@ log_in/
 
 Install the following before running the application:
 
-- Node.js and pnpm
-- Java JDK 21
-- PostgreSQL
+- Docker Desktop
 - Git
 
 ## Getting Started
@@ -57,11 +55,15 @@ git clone https://github.com/oodsystem/log_in.git
 cd log_in
 ```
 
-### 2. Configure the database
+### 2. Configure Docker environment variables
 
-Create a PostgreSQL database named `log_in`.
+Copy `.env.example` to `.env` and replace the example values:
 
-Configure your database connection and required environment variables in the backend environment.
+```bash
+cp .env.example .env
+```
+
+In PowerShell, use `Copy-Item .env.example .env` instead.
 
 Required environment variables:
 
@@ -74,16 +76,22 @@ The backend configuration also supports `DB_URL` and `DB_USERNAME`, with default
 
 **Never commit real passwords or JWT secrets to GitHub.**
 
-### 3. Run the backend
+### 3. Start the application with Docker Compose
 
-From the project root, open Git Bash and run:
+From the project root, run:
 
 ```bash
-cd backend
-./gradlew bootRun
+docker compose up --build
 ```
 
-Make sure the required environment variables are set in the terminal before starting the backend.
+The first build may take several minutes. The services are then available at:
+
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:9090`
+- PostgreSQL: `localhost:5433`
+
+Stop the services with `Ctrl+C`, or run `docker compose down`. To also remove
+the persisted database volume, run `docker compose down -v`.
 
 The API issues a short-lived access token in the login response. The long-lived refresh
 token is stored only in an HttpOnly cookie and only its SHA-256 hash is stored in the
@@ -100,9 +108,17 @@ database. The frontend keeps the access token in memory rather than localStorage
 New registrations have the `PENDING` role and cannot log in until an admin assigns
 `CUSTOMER`, `DELIVERY_GUY`, or `MANAGER`.
 
-### 4. Run the frontend
+### 4. Run without Docker (optional)
 
-Open a second terminal:
+If you prefer local development, install Java 21, Node.js/pnpm, and PostgreSQL,
+then run the backend and frontend separately:
+
+```bash
+cd backend
+./gradlew bootRun
+```
+
+In a second terminal:
 
 ```bash
 cd frontend
@@ -110,7 +126,7 @@ pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Vite in your terminal, usually `http://localhost:5173`.
+Open `http://localhost:3000`.
 
 ## Development
 
