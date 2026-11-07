@@ -1,5 +1,6 @@
 # Environment variables and secrets
 .env
+*.sql
 .env.*
 !.env.example
 **/application-local.properties
