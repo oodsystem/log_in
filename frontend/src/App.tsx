@@ -57,7 +57,7 @@ export default function App() {
   const [me, setMe] = useState<Me | null>(null)
 
   useEffect(() => {
-    void api<AuthResponse>('/api/auth/refresh')
+    void api<AuthResponse>('/api/auth/refresh', { method: 'POST' })
       .then((auth) => {
         accessToken = auth.accessToken
         return api<Me>('/api/me')
